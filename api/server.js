@@ -1,7 +1,7 @@
 // Mengimpor modul-modul yang diperlukan
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
-const { registerUser, loginUser, responseUser } = require("./utils/users");
+const { registerUser, loginUser, responseUser } = require("../utils/users");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const flash = require("connect-flash");
