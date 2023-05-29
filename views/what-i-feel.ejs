@@ -1,0 +1,60 @@
+<div class="container">
+    <% if (typeof errors !='undefined' ) { %>
+        <div class="alert alert-danger" role="alert">
+            <ul>
+                <% errors.forEach(error=> { %>
+                    <li>
+                        <%= error.msg %>
+                    </li>
+                    <% }) %>
+            </ul>
+        </div>
+        <% } %>
+
+            <% if (msg.length !==0) { %>
+                <div class="alert alert-success" role="alert">
+                    <%= msg %>
+                </div>
+                <% } %>
+
+                    <section class="vh-100 min-w-100 d-flex justify-content-center align-items-center">
+                        <div class="card w-75">
+                            <div class="card-body">
+                                <div class="card-title">
+                                    <h1>Halo, <%= username %>
+                                    </h1>
+                                </div>
+                                <div class="card-text">
+                                    <h5>Di sini kamu bisa untuk menuliskan apapun yang kamu inginkan ya, begitu kamu
+                                        scroll ke
+                                        bawah
+                                        dikit ada
+                                        sebuah form, di sana kamu bebas untuk menuliskan apapun yang sedang kamu sedang
+                                        rasakan.
+                                    </h5>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="vh-100 min-w-100 d-flex justify-content-center align-items-center">
+                        <div class="card w-75">
+                            <div class="card-body">
+                                <h5 class="card-title text-center">What I Feel</h5>
+
+                                <form method="post" action="/what-i-feel">
+                                    <div class="mb-3">
+                                        <label for="response" class="form-label">Tuliskan semua yang kamu rasakan di
+                                            sini ya
+                                            sayaang.</label>
+                                        <textarea class="form-control" id="response" name="response"
+                                            rows="3"></textarea>
+                                    </div>
+                                    <div class="d-grid gap-2 col-6 mx-auto">
+                                        <button class="btn btn-primary" type="submit">Submit!</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+</div>

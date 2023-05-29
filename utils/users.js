@@ -53,4 +53,27 @@ const loginUser = (username, password) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+const responseUser = (username, user) => {
+  const dataDir = path.join(__dirname, "../responses");
+  const file = path.join(dataDir, `${username}.json`);
+
+  if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir);
+  }
+
+  let users;
+
+  if (fs.existsSync(file)) {
+    users = JSON.parse(fs.readFileSync(file));
+  } else {
+    users = [];
+  }
+
+  users.push({
+    response: user.response,
+  });
+
+  fs.writeFileSync(file, JSON.stringify(users, null, 2));
+};
+
+module.exports = { registerUser, loginUser, responseUser };
