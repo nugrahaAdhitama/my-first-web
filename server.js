@@ -10,7 +10,7 @@ const { body, check, validationResult } = require("express-validator");
 const path = require("path");
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.set("view engine", "ejs");
 app.use(expressLayouts);
@@ -167,6 +167,6 @@ app.post("/what-i-feel", [body("response").notEmpty()], (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+app.listen(PORT, () => {
+  console.log(`Example app listening on port ${PORT}`);
 });
