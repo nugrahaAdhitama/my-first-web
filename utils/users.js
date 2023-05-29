@@ -40,5 +40,31 @@ const registerUser = async (user) => {
   fs.writeFileSync(file, JSON.stringify(users, null, 2));
 };
 
-// Mengekspor fungsi registerUser agar dapat digunakan pada modul lain
-module.exports = { registerUser };
+// Mendefinisikan fungsi loginUser dengan parameter username dan password
+const loginUser = (username, password) => {
+  const dataDir = path.join(__dirname, "../data"); // Mendapatkan jalur direktori data dengan menggabungkan jalur saat ini (__dirname) dengan "../data"
+  const file = path.join(dataDir, "users.json"); // Mendapatkan jalur file users.json dengan menggabungkan jalur direktori data dengan "users.json"
+
+  if (fs.existsSync(file)) {
+    const users = JSON.parse(fs.readFileSync(file)); // Membaca isi file users.json dan mengurai JSON menjadi objek users
+
+    const user = users.find((user) => user.username === username); // Mencari user dengan username yang sesuai dalam objek users
+
+    if (user) {
+      // Jika user ditemukan
+      if (bcrypt.compareSync(password, user.password)) {
+        // Membandingkan password yang dimasukkan dengan password yang di-hash di file
+        return { success: true, user, message: "Login successful!" }; // Mengembalikan objek dengan status login berhasil, user yang sesuai, dan pesan sukses
+      } else {
+        return { success: false, message: "Invalid username or password!" }; // Mengembalikan objek dengan status login gagal dan pesan kesalahan
+      }
+    } else {
+      return { success: false, message: "Invalid username or password!" }; // Mengembalikan objek dengan status login gagal dan pesan kesalahan
+    }
+  } else {
+    return { success: false, message: "User database not found!" }; // Mengembalikan objek dengan status login gagal dan pesan kesalahan karena database pengguna tidak ditemukan
+  }
+};
+
+// Mengekspor fungsi registerUser, loginUser agar dapat digunakan pada modul lain
+module.exports = { registerUser, loginUser };

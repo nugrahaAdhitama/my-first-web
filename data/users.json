@@ -58,5 +58,10 @@
     "id": "4c23f98d-4550-470b-b33d-b6157ae5c34b",
     "username": "123",
     "password": "$2b$10$1xPeXIICgo4/xR7eWh1EvOoU3llXQlDHTILR81Vumnd7UZUIGvJd2"
+  },
+  {
+    "id": "651e82b4-9af9-4c4f-a499-ed68ea39c1cd",
+    "username": "admin",
+    "password": "$2b$10$NH0KaD1Q8PamgvJkeAxXn.y9XWl2v3ZlO7JPWfocg2mLoP.4Z8VS."
   }
 ]

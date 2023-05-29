@@ -1,7 +1,7 @@
 // Mengimpor modul-modul yang diperlukan
 const express = require("express"); // Modul express digunakan untuk membuat aplikasi web
 const expressLayouts = require("express-ejs-layouts"); // Modul express-ejs-layouts digunakan untuk pengaturan tata letak dengan EJS
-const { registerUser } = require("./utils/users"); // Mengimpor fungsi registerUser dari file ./utils/users.js
+const { registerUser, loginUser } = require("./utils/users"); // Mengimpor fungsi registerUser dari file ./utils/users.js
 const session = require("express-session"); // Modul express-session digunakan untuk manajemen sesi
 const cookieParser = require("cookie-parser"); // Modul cookie-parser digunakan untuk parsing cookie
 const flash = require("connect-flash"); // Modul connect-flash digunakan untuk mengirim pesan flash antar permintaan
@@ -22,13 +22,23 @@ app.use(express.static(path.join(__dirname, "public"))); // Mengatur folder "pub
 app.use(cookieParser("secret")); // Menggunakan modul cookie-parser dengan kunci "secret" untuk parsing cookie
 app.use(
   session({
-    cookie: { maxAge: 6000 }, // Menentukan masa berlaku cookie dalam milidetik
-    secret: "secret", // Menentukan kunci rahasia untuk mengenkripsi data sesi
-    resave: true, // Menentukan apakah sesi akan disimpan ulang pada setiap permintaan
-    saveUninitialized: true, // Menentukan apakah sesi akan disimpan bahkan jika tidak ada data yang ditetapkan
+    cookie: { maxAge: null },
+    secret: "secret",
+    resave: true,
+    saveUninitialized: true,
   })
 );
+
 app.use(flash()); // Menggunakan modul connect-flash untuk mengirim pesan flash antar permintaan
+
+// Fungsi middleware untuk memeriksa apakah pengguna terotentikasi
+const checkAuthenticated = (req, res, next) => {
+  if (req.session.isAuthenticated) {
+    next(); // Lanjutkan ke langkah berikutnya jika pengguna terotentikasi
+  } else {
+    res.redirect("/login"); // Alihkan ke halaman login jika pengguna tidak terotentikasi
+  }
+};
 
 app.get("/", (req, res) => {
   // Menangani permintaan GET ke route "/"
@@ -97,6 +107,38 @@ app.get("/login", (req, res) => {
     title: "Login", // Mengatur judul halaman menjadi "Login"
     layout: "layouts/main-layout", // Menggunakan tata letak "layouts/main-layout"
     js: "", // Tidak ada file JavaScript yang akan digunakan
+  });
+});
+
+app.post("/login", (req, res) => {
+  // Menangani permintaan POST ke route "/login"
+  const user = {
+    username: req.body.username,
+    password: req.body.password,
+  };
+
+  const result = loginUser(user.username, user.password); // Memanggil fungsi loginUser untuk memeriksa keberhasilan login
+  if (result.success) {
+    req.session.isAuthenticated = true; // Menandai pengguna sebagai terotentikasi di sesi
+    req.session.username = result.user.username; // Menyimpan username pengguna di sesi
+
+    req.flash("login-success", "Login Success!"); // Mengirimkan pesan flash dengan kunci "login-success" dan isi pesan "Login Success!"
+    res.redirect("/dashboard"); // Mengalihkan pengguna ke halaman "/dashboard"
+  } else {
+    req.flash("login-failed", "Login Failed!"); // Mengirimkan pesan flash dengan kunci "login-failed" dan isi pesan "Login Failed!"
+    res.redirect("/login"); // Mengalihkan pengguna ke halaman "/login"
+  }
+});
+
+app.get("/dashboard", checkAuthenticated, (req, res) => {
+  // Menangani permintaan GET ke route "/dashboard"
+  console.log(req.session); // Menampilkan data sesi pengguna di konsol
+
+  res.render("dashboard", {
+    title: "Dashboard",
+    layout: "layouts/main-layout",
+    js: "",
+    username: req.session.username, // Mengirimkan username pengguna ke tampilan
   });
 });
 
