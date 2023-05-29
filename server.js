@@ -7,14 +7,17 @@ const cookieParser = require("cookie-parser"); // Modul cookie-parser digunakan 
 const flash = require("connect-flash"); // Modul connect-flash digunakan untuk mengirim pesan flash antar permintaan
 const { v4: uuidv4 } = require("uuid"); // Mengimpor fungsi v4 dari modul uuid sebagai uuidv4
 const { body, check, validationResult } = require("express-validator"); // Mengimpor fungsi body, check, validationResult dari modul express-validator untuk validasi input
+const path = require("path"); // Mengimpor modul path
+
 const app = express(); // Membuat aplikasi Express baru
 const port = 3000; // Menentukan nomor port yang akan digunakan
 
 app.set("view engine", "ejs"); // Mengatur mesin rendering yang digunakan sebagai EJS
 app.use(expressLayouts); // Menggunakan modul express-ejs-layouts untuk pengaturan tata letak
-
 app.use(express.json()); // Menggunakan middleware express.json untuk parsing permintaan dengan tipe konten application/json
 app.use(express.urlencoded({ extended: true })); // Menggunakan middleware express.urlencoded untuk parsing permintaan dengan tipe konten application/x-www-form-urlencoded
+
+app.use(express.static(path.join(__dirname, "public"))); // Mengatur folder "public" sebagai folder statis yang akan digunakan untuk file seperti CSS, JavaScript, dan gambar
 
 app.use(cookieParser("secret")); // Menggunakan modul cookie-parser dengan kunci "secret" untuk parsing cookie
 app.use(
@@ -32,7 +35,7 @@ app.get("/", (req, res) => {
   res.render("index", {
     title: "Home", // Mengatur judul halaman menjadi "Home"
     layout: "layouts/main-layout", // Menggunakan tata letak "layouts/main-layout"
-    msg: req.flash("Success"), // Mengirimkan pesan flash dengan kunci "Success" ke tampilan
+    js: "", // Tidak ada file JavaScript yang akan digunakan
   });
 });
 
@@ -65,12 +68,37 @@ app.post(
 
       registerUser(user); // Memanggil fungsi registerUser untuk mendaftarkan user
 
-      req.flash("Success", "Registration Success"); // Mengirimkan pesan flash dengan kunci "Success" dan isi pesan "Registration Success"
+      req.flash("Success", "Congratulation Registration Success"); // Mengirimkan pesan flash dengan kunci "Success" dan isi pesan "Congratulation Registration Success"
 
-      res.redirect("/"); // Mengalihkan pengguna kembali ke halaman utama ("/")
+      res.redirect("/register/success"); // Mengalihkan pengguna ke halaman "/register/success"
     }
   }
 );
+
+app.get("/register/success", (req, res) => {
+  // Menangani permintaan GET ke route "/register/success"
+  res.render("register-success", {
+    title: "Register Success", // Mengatur judul halaman menjadi "Register Success"
+    layout: "layouts/main-layout", // Menggunakan tata letak "layouts/main-layout"
+    js: "/js/register-succes.js", // Menggunakan file JavaScript "/js/register-succes.js"
+    illustration: "/assets/img/confirm.png", // Mengatur path gambar ilustrasi yang benar
+    msg: req.flash("Success"), // Mengirimkan pesan flash dengan kunci "Success" ke tampilan
+  });
+});
+
+app.get("/register/success-redirect", (req, res) => {
+  // Menangani permintaan GET ke route "/register/success-redirect"
+  res.redirect("/login"); // Mengalihkan pengguna ke halaman "/login"
+});
+
+app.get("/login", (req, res) => {
+  // Menangani permintaan GET ke route "/login"
+  res.render("login", {
+    title: "Login", // Mengatur judul halaman menjadi "Login"
+    layout: "layouts/main-layout", // Menggunakan tata letak "layouts/main-layout"
+    js: "", // Tidak ada file JavaScript yang akan digunakan
+  });
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`); // Menampilkan pesan di konsol saat aplikasi berjalan
