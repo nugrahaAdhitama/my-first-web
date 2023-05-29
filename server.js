@@ -1,7 +1,7 @@
 // Mengimpor modul-modul yang diperlukan
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
-const { registerUser, loginUser } = require("./utils/users");
+const { registerUser, loginUser, responseUser } = require("./utils/users");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
 const flash = require("connect-flash");
@@ -121,7 +121,7 @@ app.post("/login", (req, res) => {
 });
 
 app.get("/dashboard", checkAuthenticated, (req, res) => {
-  console.log(req.session);
+  // console.log(req.session);
 
   res.render("dashboard", {
     title: "Dashboard",
@@ -129,6 +129,42 @@ app.get("/dashboard", checkAuthenticated, (req, res) => {
     js: "",
     username: req.session.username,
   });
+});
+
+app.get("/what-i-feel", checkAuthenticated, (req, res) => {
+  res.render("what-i-feel", {
+    title: "What I Feel",
+    layout: "layouts/main-layout",
+    js: "",
+    username: req.session.username,
+    msg: req.flash("Submitted"),
+  });
+});
+
+app.post("/what-i-feel", [body("response").notEmpty()], (req, res) => {
+  console.log(req.body);
+  console.log(req.session);
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    res.render("what-i-feel", {
+      title: "What I Feel",
+      layout: "layouts/main-layout",
+      msg: req.flash("Failed"),
+      errors: errors.array(),
+    });
+  } else {
+    const username = req.session.username;
+    const response = {
+      response: req.body.response,
+    };
+
+    responseUser(username, response);
+
+    req.flash("Submitted", "Thanks for submitting your response!");
+
+    res.redirect("/what-i-feel");
+  }
 });
 
 app.listen(port, () => {

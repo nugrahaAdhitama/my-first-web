@@ -3,5 +3,10 @@
     "id": "39a84560-0ea0-49cb-bc38-f804719502d9",
     "username": "admin",
     "password": "$2b$10$93SRlL7GnVlFUlpRE7DNoeiNOsoEvslAYXFGfVSjFFHNsPAfllkZO"
+  },
+  {
+    "id": "359700ea-0172-42f9-8b87-992786091f49",
+    "username": "tes user",
+    "password": "$2b$10$BPJrb4L1ZYA3pE2ZAkZpUuq/KeoZV/aU1gDT//BsA3lXDpXxlq4V6"
   }
 ]
